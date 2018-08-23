@@ -8,7 +8,7 @@ from operator import itemgetter
 from lsst.ts.observatory.model import Target
 from lsst.ts.scheduler.setup import EXTENSIVE
 from lsst.ts.scheduler.kernel import Field
-from lsst.ts.scheduler.proposals import Proposal
+from lsst.ts.proposalScheduler.proposals import Proposal
 
 __all__ = ["AreaDistributionProposal"]
 

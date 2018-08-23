@@ -1,5 +1,5 @@
 from builtins import object
-from lsst.ts.scheduler.proposals.subsequence import Subsequence
+from lsst.ts.proposalScheduler.proposals.subsequence import Subsequence
 
 SEQ_IDLE = 0
 SEQ_ACTIVE = 1

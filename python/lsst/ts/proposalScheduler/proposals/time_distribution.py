@@ -7,8 +7,8 @@ from operator import itemgetter
 
 from lsst.ts.scheduler.setup import EXTENSIVE
 from lsst.ts.scheduler.kernel import Field
-from lsst.ts.scheduler.proposals import Proposal
-from lsst.ts.scheduler.proposals.sequence import Sequence
+from lsst.ts.proposalScheduler.proposals import Proposal
+from lsst.ts.proposalScheduler.proposals.sequence import Sequence
 
 class TimeDistributionProposalParameters(object):
 
