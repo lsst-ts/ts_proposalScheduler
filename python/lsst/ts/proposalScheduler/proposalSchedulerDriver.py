@@ -21,7 +21,7 @@ from lsst.ts.scheduler.fields import FieldsDatabase
 from lsst.ts.scheduler.lookahead import Lookahead
 from lsst.ts.scheduler import Driver, DriverParameters
 
-__all__ = ["Driver"]
+__all__ = ["ProposalDriver"]
 
 
 class ProposalDriverParameters(DriverParameters):
@@ -68,43 +68,17 @@ class ProposalDriverParameters(DriverParameters):
         self.new_moon_phase_threshold = confdict["darktime"]["new_moon_phase_threshold"]
 
 
-class ProposalDriver(object):
+class ProposalDriver(Driver):
     def __init__(self):
 
+        super().__init__()
+
         self.log = logging.getLogger("schedulerDriver")
-
-        self.params = DriverParameters()
+        self.params = ProposalDriverParameters()
         self.location = ObservatoryLocation()
-
-        self.observatoryModel = ObservatoryModel(self.location, WORDY)
-        self.observatoryModel2 = ObservatoryModel(self.location, WORDY)
-        self.observatoryState = ObservatoryState()
-
-        self.sky = AstronomicalSkyModel(self.location)
-
         self.db = FieldsDatabase()
-
         self.build_fields_dict()
-
-        self.propid_counter = 0
         self.science_proposal_list = []
-
-        self.start_time = 0.0
-        self.time = 0.0
-        self.targetid = 0
-        self.survey_started = False
-        self.isnight = False
-        self.sunset_timestamp = 0.0
-        self.sunrise_timestamp = 0.0
-        self.survey_duration_DAYS = 0.0
-        self.survey_duration_SECS = self.survey_duration_DAYS * 24 * 60 * 60.0
-        self.darktime = False
-        self.mounted_filter = ""
-        self.unmounted_filter = ""
-        self.midnight_moonphase = 0.0
-
-        self.nulltarget = Target()
-        self.nulltarget.targetid = -1
         self.nulltarget.num_exp = 1
         self.nulltarget.exp_times = [0.0]
         self.nulltarget.num_props = 1
@@ -113,16 +87,6 @@ class ProposalDriver(object):
         self.nulltarget.bonus_list = [0.0]
         self.nulltarget.value_list = [0.0]
         self.nulltarget.propboost_list = [1.0]
-        self.last_winner_target = self.nulltarget.get_copy()
-        self.deep_drilling_target = None
-
-        self.need_filter_swap = False
-        self.filter_to_unmount = ""
-        self.filter_to_mount = ""
-
-        self.cloud = 0.0
-        self.seeing = 0.0
-
         self.lookahead = Lookahead()
 
     def configure_scheduler(self, **kwargs):
@@ -166,7 +130,6 @@ class ProposalDriver(object):
 
         prop_conf_path = os.path.dirname(survey_conf_file)
         confdict = read_conf_file(survey_conf_file)
-
         self.survey_duration_DAYS = confdict["survey"]["survey_duration"]
         self.survey_duration_SECS = self.survey_duration_DAYS * 24 * 60 * 60.0
 
@@ -214,9 +177,7 @@ class ProposalDriver(object):
             prop.configure_constraints(self.params)
 
     def configure_duration(self, survey_duration):
-
-        self.survey_duration_DAYS = survey_duration
-        self.survey_duration_SECS = survey_duration * 24 * 60 * 60.0
+        super().configure_duration(survey_duration)
 
     def configure(self, confdict):
 
@@ -253,51 +214,31 @@ class ProposalDriver(object):
         self.lookahead.bonus_weight = self.params.lookahead_bonus_weight
 
     def configure_location(self, confdict):
-
-        self.location.configure(confdict)
-        self.observatoryModel.location.configure(confdict)
-        self.observatoryModel2.location.configure(confdict)
-        self.sky.update_location(self.location)
+        super().configure_location(confdict)
 
     def configure_observatory(self, confdict):
-
-        self.observatoryModel.configure(confdict)
-        self.observatoryModel2.configure(confdict)
+        super().configure_observatory(confdict)
 
     def configure_telescope(self, confdict):
-
-        self.observatoryModel.configure_telescope(confdict)
-        self.observatoryModel2.configure_telescope(confdict)
+        super().configure_telescope(confdict)
 
     def configure_rotator(self, confdict):
-
-        self.observatoryModel.configure_rotator(confdict)
-        self.observatoryModel2.configure_rotator(confdict)
+        super().configure_rotator(confdict)
 
     def configure_dome(self, confdict):
-
-        self.observatoryModel.configure_dome(confdict)
-        self.observatoryModel2.configure_dome(confdict)
+        super().configure_dome(confdict)
 
     def configure_optics(self, confdict):
-
-        self.observatoryModel.configure_optics(confdict)
-        self.observatoryModel2.configure_optics(confdict)
+        super().configure_optics(confdict)
 
     def configure_camera(self, confdict):
-
-        self.observatoryModel.configure_camera(confdict)
-        self.observatoryModel2.configure_camera(confdict)
+        super().configure_camera(confdict)
 
     def configure_slew(self, confdict):
-
-        self.observatoryModel.configure_slew(confdict)
-        self.observatoryModel2.configure_slew(confdict)
+        super().configure_slew(confdict)
 
     def configure_park(self, confdict):
-
-        self.observatoryModel.configure_park(confdict)
-        self.observatoryModel2.configure_park(confdict)
+        super().configure_park(confdict)
 
     def create_area_proposal(self, propid, name, config_dict):
 
@@ -463,37 +404,13 @@ class ProposalDriver(object):
                            (self.filter_to_mount, self.filter_to_unmount))
 
     def swap_filter(self, filter_to_unmount, filter_to_mount):
-
-        self.log.info("swap_filter swap %s=>cam=>%s" % (filter_to_mount, filter_to_unmount))
-
-        self.observatoryModel.swap_filter(filter_to_unmount)
-
-        self.unmounted_filter = filter_to_unmount
-        self.mounted_filter = filter_to_mount
-
-        return
+        super().swap_filter(filter_to_unmount, filter_to_mount)
 
     def update_time(self, timestamp, night):
+        super().update_time(timestamp,night)
 
-        self.time = timestamp
-        self.observatoryModel.update_state(self.time)
-        if not self.survey_started:
-            self.start_survey(timestamp, night)
-
-        if self.isnight:
-            # if round(timestamp) >= round(self.sunrise_timestamp):
-            if timestamp >= self.sunrise_timestamp:
-                self.end_night(timestamp, night)
-        else:
-            # if round(timestamp) >= round(self.sunset_timestamp):
-            if timestamp >= self.sunset_timestamp:
-                self.start_night(timestamp, night)
-
-        return self.isnight
-
-    def get_need_filter_swap(self):
-
-        return (self.need_filter_swap, self.filter_to_unmount, self.filter_to_mount)
+    #def get_need_filter_swap(self):
+    #    return (self.need_filter_swap, self.filter_to_unmount, self.filter_to_mount)
 
     def update_internal_conditions(self, observatory_state, night):
 
@@ -509,11 +426,7 @@ class ProposalDriver(object):
         self.observatoryState.set(observatory_state)
 
     def update_external_conditions(self, cloud, seeing):
-
-        self.cloud = cloud
-        self.seeing = seeing
-
-        return
+        super().update_external_conditions(cloud,seeing)
 
     def select_next_target(self):
 
