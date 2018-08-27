@@ -123,7 +123,6 @@ class ProposalDriver(Driver):
                 self.create_sequence_proposal(self.propid_counter+1, sequence_props.name, conf_dict)
                 survey_topology.num_seq_props += 1
                 survey_topology.sequence_propos.append(sequence_props.name)
-
         return survey_topology
 
     def configure_survey(self, survey_conf_file):
@@ -176,9 +175,6 @@ class ProposalDriver(Driver):
         for prop in self.science_proposal_list:
             prop.configure_constraints(self.params)
 
-    def configure_duration(self, survey_duration):
-        super().configure_duration(survey_duration)
-
     def configure(self, confdict):
 
         self.params.configure(confdict)
@@ -212,33 +208,6 @@ class ProposalDriver(Driver):
 
         self.lookahead.window_size = self.params.lookahead_window_size
         self.lookahead.bonus_weight = self.params.lookahead_bonus_weight
-
-    def configure_location(self, confdict):
-        super().configure_location(confdict)
-
-    def configure_observatory(self, confdict):
-        super().configure_observatory(confdict)
-
-    def configure_telescope(self, confdict):
-        super().configure_telescope(confdict)
-
-    def configure_rotator(self, confdict):
-        super().configure_rotator(confdict)
-
-    def configure_dome(self, confdict):
-        super().configure_dome(confdict)
-
-    def configure_optics(self, confdict):
-        super().configure_optics(confdict)
-
-    def configure_camera(self, confdict):
-        super().configure_camera(confdict)
-
-    def configure_slew(self, confdict):
-        super().configure_slew(confdict)
-
-    def configure_park(self, confdict):
-        super().configure_park(confdict)
 
     def create_area_proposal(self, propid, name, config_dict):
 
@@ -403,15 +372,6 @@ class ProposalDriver(Driver):
             self.log.debug("end_night filter swap %s=>cam=>%s" %
                            (self.filter_to_mount, self.filter_to_unmount))
 
-    def swap_filter(self, filter_to_unmount, filter_to_mount):
-        super().swap_filter(filter_to_unmount, filter_to_mount)
-
-    def update_time(self, timestamp, night):
-        super().update_time(timestamp,night)
-
-    #def get_need_filter_swap(self):
-    #    return (self.need_filter_swap, self.filter_to_unmount, self.filter_to_mount)
-
     def update_internal_conditions(self, observatory_state, night):
 
         if observatory_state.unmountedfilters != self.observatoryModel.current_state.unmountedfilters:
@@ -424,9 +384,6 @@ class ProposalDriver(Driver):
         self.time = observatory_state.time
         self.observatoryModel.set_state(observatory_state)
         self.observatoryState.set(observatory_state)
-
-    def update_external_conditions(self, cloud, seeing):
-        super().update_external_conditions(cloud,seeing)
 
     def select_next_target(self):
 
