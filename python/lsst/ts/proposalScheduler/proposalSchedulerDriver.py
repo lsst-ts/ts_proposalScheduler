@@ -79,14 +79,6 @@ class ProposalDriver(Driver):
         self.db = FieldsDatabase()
         self.build_fields_dict()
         self.science_proposal_list = []
-        self.nulltarget.num_exp = 1
-        self.nulltarget.exp_times = [0.0]
-        self.nulltarget.num_props = 1
-        self.nulltarget.propid_list = [0]
-        self.nulltarget.need_list = [0.0]
-        self.nulltarget.bonus_list = [0.0]
-        self.nulltarget.value_list = [0.0]
-        self.nulltarget.propboost_list = [1.0]
         self.lookahead = Lookahead()
 
     def configure_scheduler(self, **kwargs):
