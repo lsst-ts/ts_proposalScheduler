@@ -18,7 +18,7 @@ from lsst.ts.scheduler.kernel import Field, SurveyTopology
 from lsst.ts.proposalScheduler.proposals import ScriptedProposal
 from lsst.ts.proposalScheduler.proposals import AreaDistributionProposal, TimeDistributionProposal
 from lsst.ts.scheduler.fields import FieldsDatabase
-from lsst.ts.scheduler.lookahead import Lookahead
+from lsst.ts.proposalScheduler.lookahead import Lookahead
 from lsst.ts.scheduler import Driver, DriverParameters
 
 __all__ = ["ProposalDriver"]
