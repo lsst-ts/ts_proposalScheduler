@@ -1,5 +1,6 @@
 from builtins import str
 import os
+from lsst.utils import getPackageDir
 import logging
 import unittest
 import warnings
@@ -21,7 +22,7 @@ class TestScriptedProposal(unittest.TestCase):
 
     def setUp(self):
         logging.getLogger().setLevel(logging.WARN)
-        configfilepath = conf_file_path(__name__, "../conf", "survey", "scriptedProp1.conf")
+        configfilepath = os.path.join(getPackageDir('ts_proposalScheduler'), 'tests', 'conf', 'survey', 'scriptedProp1.conf')
         resource_path = os.path.dirname(configfilepath)
         proposal_confdict = read_conf_file(configfilepath)
         script_file = os.path.join(resource_path, proposal_confdict["script"]["scriptfile"])
