@@ -19,7 +19,8 @@ class ScriptedProposal(Proposal):
     def read_script(self):
 
         scriptfilepath = self.script_file
-        lines = file(scriptfilepath).readlines()
+        with open(scriptfilepath) as f:
+            lines = f.readlines()
         targetid = 0
         self.targetsList = []
         for line in lines:
