@@ -15,6 +15,7 @@ class TestScriptedProposal(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.start_stamp = 1664582400
         warnings.filterwarnings('ignore', category=FutureWarning, append=True)
         location = ObservatoryLocation()
         location.for_lsst()
@@ -33,50 +34,44 @@ class TestScriptedProposal(unittest.TestCase):
         self.assertEqual(len(self.scriptedprop.targetsList), 10)
 
     def test_suggest_targets(self):
-        tlist = self.scriptedprop.suggest_targets(1641090000)
+        time = self.start_stamp
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:71],
                          "targetid=0 field=2001 filter=r exp_times=[15, 15] ra=85.721 dec=-14.442")
 
-        tlist = self.scriptedprop.suggest_targets(1641091040)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=1 field=2002 filter=r exp_times=[15, 15] ra=229.721 dec=-14.442")
-
-        tlist = self.scriptedprop.suggest_targets(1641091080)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=2 field=2003 filter=r exp_times=[15, 15] ra=130.279 dec=-14.442")
-
-        tlist = self.scriptedprop.suggest_targets(1641091120)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=3 field=2004 filter=i exp_times=[15, 15] ra=346.279 dec=-14.441")
-
-        tlist = self.scriptedprop.suggest_targets(1641091160)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=4 field=2005 filter=i exp_times=[15, 15] ra=346.279 dec=-14.441")
-
-        tlist = self.scriptedprop.suggest_targets(1641091200)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:71],
                          "targetid=5 field=2006 filter=i exp_times=[15, 15] ra=13.721 dec=-14.441")
-
-        tlist = self.scriptedprop.suggest_targets(1641091240)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=6 field=2007 filter=z exp_times=[15, 15] ra=199.206 dec=-14.112")
-
-        tlist = self.scriptedprop.suggest_targets(1641091280)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=7 field=2008 filter=z exp_times=[15, 15] ra=160.794 dec=-14.112")
-
-        tlist = self.scriptedprop.suggest_targets(1641091320)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=8 field=2009 filter=z exp_times=[15, 15] ra=232.794 dec=-14.112")
-
-        tlist = self.scriptedprop.suggest_targets(1641091360)
+        time += 40
+        tlist = self.scriptedprop.suggest_targets(time)
         self.assertEqual(str(tlist[0])[:72],
                          "targetid=9 field=2010 filter=y exp_times=[15, 15] ra=127.206 dec=-14.112")
-
-        tlist = self.scriptedprop.suggest_targets(1641091400)
-        self.assertEqual(str(tlist[0])[:73],
-                         "targetid=10 field=2010 filter=y exp_times=[15, 15] ra=127.206 dec=-14.112")
-
-        tlist = self.scriptedprop.suggest_targets(1641091440)
-        self.assertEqual(str(tlist[0])[:73],
-                         "targetid=11 field=2010 filter=y exp_times=[15, 15] ra=127.206 dec=-14.112")
